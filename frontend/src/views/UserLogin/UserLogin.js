@@ -41,8 +41,10 @@ export default function UserLogin() {
         <GridItem xs={12} sm={12} md={8}>
           <Card>
             <CardHeader color="primary">
-              <h4 className={classes.cardTitleWhite}>Edit Profile</h4>
-              <p className={classes.cardCategoryWhite}>Complete your profile</p>
+              <h4 className={classes.cardTitleWhite}>Login</h4>
+              <p className={classes.cardCategoryWhite}>
+                Insert your username and password
+              </p>
             </CardHeader>
             <CardBody>
               <GridContainer>
@@ -57,8 +59,8 @@ export default function UserLogin() {
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
                   <CustomInput
-                    labelText="Email address"
-                    id="email-address"
+                    labelText="Password"
+                    id="password"
                     formControlProps={{
                       fullWidth: true,
                     }}
@@ -67,7 +69,7 @@ export default function UserLogin() {
               </GridContainer>
             </CardBody>
             <CardFooter>
-              <Button color="primary">Update Profile</Button>
+              <Button color="primary">Login</Button>
             </CardFooter>
           </Card>
         </GridItem>
