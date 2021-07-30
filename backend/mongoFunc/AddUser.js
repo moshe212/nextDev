@@ -1,9 +1,26 @@
 const { models } = require("../models");
 
-const AddUser = async function ({ UserName, Password }) {
-  const user = new models.TaskDetails({
+const AddUser = async function ({
+  UserName,
+  Password,
+  Company,
+  Email_address,
+  First_Name,
+  Last_Name,
+  City,
+  Country,
+  Postal_Code,
+}) {
+  const user = new models.User({
     UserName,
     Password,
+    Company,
+    Email_address,
+    First_Name,
+    Last_Name,
+    City,
+    Country,
+    Postal_Code,
   });
 
   let newUser;
