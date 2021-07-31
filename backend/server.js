@@ -6,8 +6,8 @@ const server = http.createServer(app);
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 
-const { models } = require("../models");
-const { mongoFunc } = require("../mongoFunc");
+const { models } = require("./models");
+const { mongoFunc } = require("./mongoFunc");
 
 dotenv.config();
 app.use(bodyParser.json());
@@ -31,10 +31,17 @@ function connectToDB() {
 }
 
 app.post("/api/RegisterUser", async (req, res) => {
-  console.log("SaveTaskConfiguration", req.body);
+  console.log("UserDetails", req.body);
   let newUserDetails = {
-    UserName: req.body.UserName,
-    Password: req.body.Password,
+    UserName: req.body.userDetails.user_name,
+    Password: req.body.userDetails.password,
+    Company: "",
+    Email_address: req.body.userDetails.email_address,
+    First_Name: req.body.userDetails.first_name,
+    Last_Name: req.body.userDetails.last_name,
+    City: req.body.userDetails.city,
+    Country: req.body.userDetails.country,
+    Postal_Code: req.body.userDetails.postal_code,
   };
   console.log(newUserDetails);
   const newUser = await mongoFunc.AddUser(newUserDetails);
