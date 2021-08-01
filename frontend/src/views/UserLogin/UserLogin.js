@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -11,6 +11,7 @@ import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardBody from "components/Card/CardBody.js";
 import CardFooter from "components/Card/CardFooter.js";
+import axios from "axios";
 
 const styles = {
   cardCategoryWhite: {
@@ -34,6 +35,41 @@ const styles = {
 const useStyles = makeStyles(styles);
 
 export default function UserLogin() {
+  const [formstate, setFormstate] = useState({
+    user_name: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    // console.log(e.target);
+    let nam = e.target.id;
+    let val = e.target.value;
+    setFormstate({ ...formstate, [nam]: val });
+    // console.log(formstate);
+  };
+
+  const Login = (e) => {
+    e.preventDefault();
+
+    console.log(formstate);
+    axios
+      .post("/api/LogInUser", {
+        userDetails: formstate,
+      })
+      .then(function(response) {
+        // handle success
+        console.log(response.data);
+        // setResp(response.data.data[0].text);
+      })
+      .catch(function(error) {
+        // handle error
+        console.log(error);
+      })
+      .then(function() {
+        // always executed
+      });
+  };
+
   const classes = useStyles();
   return (
     <div>
@@ -55,6 +91,11 @@ export default function UserLogin() {
                     formControlProps={{
                       fullWidth: true,
                     }}
+                    inputProps={{
+                      onChange: (e) => {
+                        handleChange(e);
+                      },
+                    }}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
@@ -64,12 +105,24 @@ export default function UserLogin() {
                     formControlProps={{
                       fullWidth: true,
                     }}
+                    inputProps={{
+                      onChange: (e) => {
+                        handleChange(e);
+                      },
+                    }}
                   />
                 </GridItem>
               </GridContainer>
             </CardBody>
             <CardFooter>
-              <Button color="primary">Login</Button>
+              <Button
+                onClick={(e) => {
+                  Login(e);
+                }}
+                color="primary"
+              >
+                Login
+              </Button>
             </CardFooter>
           </Card>
         </GridItem>

@@ -30,7 +30,7 @@ const AddUser = async function ({
     return newUser;
   } catch (error) {
     console.log(`AddUser - error - ${error}`);
-    throw error;
+    return error;
   }
 };
 
