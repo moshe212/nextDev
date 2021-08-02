@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const server = http.createServer(app);
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
-
+const checkauth = require("./middleware/CheckAuth");
 const { models } = require("./models");
 const { mongoFunc } = require("./mongoFunc");
 
@@ -108,7 +108,9 @@ app.post("/api/LogInUser", async (req, res) => {
     });
 });
 
-app.post("/api/LogOutUser", async (req, res) => {});
+app.post("/api/LogOutUser", checkauth, async (req, res) => {
+  console.log(req.body);
+});
 
 app.get("*", (req, res) => {
   console.log("*", req.body);
