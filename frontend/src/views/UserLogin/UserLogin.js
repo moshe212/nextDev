@@ -87,7 +87,7 @@ export default function UserLogin() {
                 <GridItem xs={12} sm={12} md={3}>
                   <CustomInput
                     labelText="Username"
-                    id="username"
+                    id="user_name"
                     formControlProps={{
                       fullWidth: true,
                     }}

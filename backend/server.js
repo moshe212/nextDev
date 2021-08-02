@@ -11,6 +11,8 @@ const { mongoFunc } = require("./mongoFunc");
 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const { json } = require("body-parser");
+const { result } = require("lodash");
 
 dotenv.config();
 app.use(bodyParser.json());
@@ -74,6 +76,36 @@ app.post("/api/RegisterUser", async (req, res) => {
 
 app.post("/api/LogInUser", async (req, res) => {
   console.log("LogInUser", req.body);
+  models.User.find({ UserName: req.body.userDetails.user_name })
+    .exec()
+    .then((user) => {
+      if (user.length < 1) {
+        return res.status(401).json({ message: "Auth faild" });
+      }
+      bcrypt.compare(
+        req.body.userDetails.password,
+        user[0].Password,
+        (err, result) => {
+          if (err) {
+            return res.status(401).json({ message: "Auth faild" });
+          }
+          if (result) {
+            const token = jwt.sign(
+              { email: user[0].Email_address, userId: user[0]._id },
+              process.env.JWT_KEY,
+              { expiresIn: "1h" }
+            );
+            return res
+              .status(200)
+              .json({ message: "Auth successful", token: token });
+          }
+        }
+      );
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ error: err });
+    });
 });
 
 app.post("/api/LogOutUser", async (req, res) => {});
