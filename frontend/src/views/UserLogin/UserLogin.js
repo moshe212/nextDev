@@ -12,6 +12,8 @@ import CardHeader from "components/Card/CardHeader.js";
 import CardBody from "components/Card/CardBody.js";
 import CardFooter from "components/Card/CardFooter.js";
 import axios from "axios";
+import { connect } from "react-redux";
+import { saveToken } from "../../redux/actions";
 
 const styles = {
   cardCategoryWhite: {
@@ -34,7 +36,11 @@ const styles = {
 
 const useStyles = makeStyles(styles);
 
-export default function UserLogin() {
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  saveToken: (token) => dispatch(saveToken(token)),
+});
+
+function UserLogin(props) {
   const [formstate, setFormstate] = useState({
     user_name: "",
     password: "",
@@ -58,7 +64,8 @@ export default function UserLogin() {
       })
       .then(function(response) {
         // handle success
-        console.log(response.data);
+        console.log(response.data.token);
+        props.saveToken(response.data.token);
         // setResp(response.data.data[0].text);
       })
       .catch(function(error) {
@@ -130,3 +137,8 @@ export default function UserLogin() {
     </div>
   );
 }
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(UserLogin);
