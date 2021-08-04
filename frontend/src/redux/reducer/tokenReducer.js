@@ -1,14 +1,10 @@
-import { SAVE_TOKEN } from "../actions";
-function manageToken(state = { token: "" }, action) {
+import { SAVE_USER_DETAILS } from "../actions";
+function manageUserState(state = { user_details: {} }, action) {
   switch (action.type) {
-    case SAVE_TOKEN:
-      // const oldItems = state.tokens || '';
-      return {
-        ...state,
-        token: action.payload,
-      };
+    case SAVE_USER_DETAILS:
+      return { ...state, user_details: action.payload };
     default:
       return state;
   }
 }
-export default manageToken;
+export default manageUserState;

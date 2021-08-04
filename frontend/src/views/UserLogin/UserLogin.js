@@ -13,7 +13,8 @@ import CardBody from "components/Card/CardBody.js";
 import CardFooter from "components/Card/CardFooter.js";
 import axios from "axios";
 import { connect } from "react-redux";
-import { saveToken } from "../../redux/actions";
+import { useHistory } from "react-router-dom";
+import { saveUserDetails } from "../../redux/actions";
 
 const styles = {
   cardCategoryWhite: {
@@ -37,7 +38,7 @@ const styles = {
 const useStyles = makeStyles(styles);
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  saveToken: (token) => dispatch(saveToken(token)),
+  saveUserDetails: (userdetails) => dispatch(saveUserDetails(userdetails)),
 });
 
 function UserLogin(props) {
@@ -45,6 +46,8 @@ function UserLogin(props) {
     user_name: "",
     password: "",
   });
+
+  let history = useHistory();
 
   const handleChange = (e) => {
     // console.log(e.target);
@@ -64,9 +67,9 @@ function UserLogin(props) {
       })
       .then(function(response) {
         // handle success
-        console.log(response.data.token);
-        props.saveToken(response.data.token);
-        // setResp(response.data.data[0].text);
+        console.log(response.data);
+        props.saveUserDetails(response.data.userdetails);
+        history.push("/admin/user");
       })
       .catch(function(error) {
         // handle error

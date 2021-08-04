@@ -57,6 +57,7 @@ app.post("/api/RegisterUser", async (req, res) => {
               City: req.body.userDetails.city,
               Country: req.body.userDetails.country,
               Postal_Code: req.body.userDetails.postal_code,
+              About_Me: "",
             };
             console.log(newUserDetails);
             const newUser = await mongoFunc
@@ -91,13 +92,27 @@ app.post("/api/LogInUser", async (req, res) => {
           }
           if (result) {
             const token = jwt.sign(
-              { email: user[0].Email_address, userId: user[0]._id },
+              { username: user[0].User_Name, userId: user[0]._id },
               process.env.JWT_KEY,
               { expiresIn: "1h" }
             );
-            return res
-              .status(200)
-              .json({ message: "Auth successful", token: token });
+            const user_details = {
+              UserName: user[0].UserName,
+              Company: user[0].Company,
+              Email_address: user[0].Email_address,
+              First_Name: user[0].First_Name,
+              Last_Name: user[0].Last_Name,
+              City: user[0].City,
+              Country: user[0].Country,
+              Postal_Code: user[0].Postal_Code,
+              About_Me: user[0].About_Me,
+              Token: token,
+            };
+            return res.status(200).json({
+              message: "Auth successful",
+              // token: token,
+              userdetails: user_details,
+            });
           }
         }
       );
@@ -110,6 +125,51 @@ app.post("/api/LogInUser", async (req, res) => {
 
 app.post("/api/LogOutUser", checkauth, async (req, res) => {
   console.log(req.body);
+});
+
+app.post("/api/UpdateProfile", checkauth, async (req, res) => {
+  console.log(req.body);
+
+  const query = { UserName: req.body.userDetails.user_name };
+  const update = {
+    Email_address: req.body.userDetails.email_address,
+    First_Name: req.body.userDetails.first_name,
+    Last_Name: req.body.userDetails.last_name,
+    City: req.body.userDetails.city,
+    Country: req.body.userDetails.country,
+    Postal_Code: req.body.userDetails.postal_code,
+    About_Me: req.body.userDetails.about_me,
+  };
+  models.User.findOneAndUpdate(
+    query,
+    update,
+    { new: true },
+    function (err, doc) {
+      if (err) {
+        console.log("Can not update", err);
+        return res.status(500).json({ error: err });
+      }
+      console.log(doc);
+      const token = jwt.sign(
+        { username: doc.User_Name, userId: doc._id },
+        process.env.JWT_KEY,
+        { expiresIn: "1h" }
+      );
+      const user_details = {
+        UserName: doc.UserName,
+        Company: doc.Company,
+        Email_address: doc.Email_address,
+        First_Name: doc.First_Name,
+        Last_Name: doc.Last_Name,
+        City: doc.City,
+        Country: doc.Country,
+        Postal_Code: doc.Postal_Code,
+        About_Me: doc.About_Me,
+        Token: token,
+      };
+      return res.status(200).json({ userdetails: user_details });
+    }
+  );
 });
 
 app.get("*", (req, res) => {

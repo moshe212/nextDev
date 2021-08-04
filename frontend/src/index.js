@@ -34,7 +34,7 @@ const enhancers = compose(
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );
 const hist = createBrowserHistory();
-const store = createStore(rootReducer, { token: "" }, enhancers);
+const store = createStore(rootReducer, { user_details: {} }, enhancers);
 
 ReactDOM.render(
   <Provider store={store}>

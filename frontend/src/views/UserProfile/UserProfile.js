@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -16,9 +16,16 @@ import CardFooter from "components/Card/CardFooter.js";
 import avatar from "assets/img/faces/marc.jpg";
 
 import { connect } from "react-redux";
+import axios from "axios";
+import { saveUserDetails } from "../../redux/actions";
+
 const mapStateToProps = (state) => {
-  return state.token || "";
+  return state.user_details || {};
 };
+
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  saveUserDetails: (userdetails) => dispatch(saveUserDetails(userdetails)),
+});
 
 const styles = {
   cardCategoryWhite: {
@@ -42,8 +49,54 @@ const styles = {
 const useStyles = makeStyles(styles);
 
 function UserProfile(props) {
-  console.log("props.token", props.token);
+  const [formstate, setFormstate] = useState({
+    user_name: props.user_details ? props.user_details.UserName : "",
+    email_address: props.user_details ? props.user_details.Email_address : "",
+    first_name: props.user_details ? props.user_details.First_Name : "",
+    last_name: props.user_details ? props.user_details.Last_Name : "",
+    city: props.user_details ? props.user_details.City : "",
+    country: props.user_details ? props.user_details.Country : "",
+    postal_code: props.user_details ? props.user_details.Postal_Code : "",
+    about_me: props.user_details ? props.user_details.About_Me : "",
+    token: props.user_details ? props.user_details.Token : "",
+  });
+
+  const handleChange = (e) => {
+    // console.log(e.target);
+    let nam = e.target.id;
+    let val = e.target.value;
+    setFormstate({ ...formstate, [nam]: val });
+    // console.log(formstate);
+  };
+
+  console.log("props", props);
+  console.log("state", formstate);
   const classes = useStyles();
+
+  const UpdateProfile = (e) => {
+    e.preventDefault();
+
+    console.log(formstate);
+    axios
+      .post("/api/UpdateProfile", {
+        userDetails: formstate,
+      })
+      .then(function(response) {
+        // handle success
+        console.log("pro", response.data);
+        props.saveUserDetails(response.data.userdetails);
+
+        // setResp(response.data.data[0].text);
+      })
+      .catch(function(error) {
+        // handle error
+        console.log(error);
+      })
+      .then(function() {
+        // always executed
+      });
+  };
+
   return (
     <div>
       <GridContainer>
@@ -70,19 +123,31 @@ function UserProfile(props) {
                 <GridItem xs={12} sm={12} md={3}>
                   <CustomInput
                     labelText="Username"
-                    id="username"
+                    id="user_name"
                     formControlProps={{
                       fullWidth: true,
                     }}
+                    inputProps={{
+                      onChange: (e) => {
+                        handleChange(e);
+                      },
+                    }}
+                    defaultValue={formstate.user_name}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
                   <CustomInput
                     labelText="Email address"
-                    id="email-address"
+                    id="email_address"
                     formControlProps={{
                       fullWidth: true,
                     }}
+                    inputProps={{
+                      onChange: (e) => {
+                        handleChange(e);
+                      },
+                    }}
+                    defaultValue={formstate.email_address}
                   />
                 </GridItem>
               </GridContainer>
@@ -90,19 +155,31 @@ function UserProfile(props) {
                 <GridItem xs={12} sm={12} md={6}>
                   <CustomInput
                     labelText="First Name"
-                    id="first-name"
+                    id="first_name"
                     formControlProps={{
                       fullWidth: true,
                     }}
+                    inputProps={{
+                      onChange: (e) => {
+                        handleChange(e);
+                      },
+                    }}
+                    defaultValue={formstate.first_name}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
                   <CustomInput
                     labelText="Last Name"
-                    id="last-name"
+                    id="last_name"
                     formControlProps={{
                       fullWidth: true,
                     }}
+                    inputProps={{
+                      onChange: (e) => {
+                        handleChange(e);
+                      },
+                    }}
+                    defaultValue={formstate.last_name}
                   />
                 </GridItem>
               </GridContainer>
@@ -114,6 +191,12 @@ function UserProfile(props) {
                     formControlProps={{
                       fullWidth: true,
                     }}
+                    inputProps={{
+                      onChange: (e) => {
+                        handleChange(e);
+                      },
+                    }}
+                    defaultValue={formstate.city}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
@@ -123,15 +206,27 @@ function UserProfile(props) {
                     formControlProps={{
                       fullWidth: true,
                     }}
+                    inputProps={{
+                      onChange: (e) => {
+                        handleChange(e);
+                      },
+                    }}
+                    defaultValue={formstate.country}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
                   <CustomInput
                     labelText="Postal Code"
-                    id="postal-code"
+                    id="postal_code"
                     formControlProps={{
                       fullWidth: true,
                     }}
+                    inputProps={{
+                      onChange: (e) => {
+                        handleChange(e);
+                      },
+                    }}
+                    defaultValue={formstate.postal_code}
                   />
                 </GridItem>
               </GridContainer>
@@ -140,7 +235,7 @@ function UserProfile(props) {
                   <InputLabel style={{ color: "#AAAAAA" }}>About me</InputLabel>
                   <CustomInput
                     labelText="Lamborghini Mercy, Your chick she so thirsty, I'm in that two seat Lambo."
-                    id="about-me"
+                    id="about_me"
                     formControlProps={{
                       fullWidth: true,
                     }}
@@ -148,35 +243,53 @@ function UserProfile(props) {
                       multiline: true,
                       rows: 5,
                     }}
+                    inputProps={{
+                      onChange: (e) => {
+                        handleChange(e);
+                      },
+                    }}
+                    defaultValue={formstate.about_me}
                   />
                 </GridItem>
               </GridContainer>
             </CardBody>
             <CardFooter>
-              <Button color="primary">Update Profile</Button>
+              <Button
+                onClick={(e) => {
+                  UpdateProfile(e);
+                }}
+                color="primary"
+              >
+                Update Profile
+              </Button>
             </CardFooter>
           </Card>
         </GridItem>
         <GridItem xs={12} sm={12} md={4}>
-          <Card profile>
-            <CardAvatar profile>
-              <a href="#pablo" onClick={(e) => e.preventDefault()}>
-                <img src={avatar} alt="..." />
-              </a>
-            </CardAvatar>
-            <CardBody profile>
-              <h6 className={classes.cardCategory}>CEO / CO-FOUNDER</h6>
-              <h4 className={classes.cardTitle}>Alec Thompson</h4>
-              <p className={classes.description}>
-                Don{"'"}t be scared of the truth because we need to restart the
-                human foundation in truth And I love you like Kanye loves Kanye
-                I love Rick Owens’ bed design but the back is...
-              </p>
-              <Button color="primary" round>
-                Follow
-              </Button>
-            </CardBody>
-          </Card>
+          {props.user_details ? (
+            <Card profile>
+              <CardAvatar profile>
+                <a href="#pablo" onClick={(e) => e.preventDefault()}>
+                  <img src={avatar} alt="..." />
+                </a>
+              </CardAvatar>
+              <CardBody profile>
+                <h6 className={classes.cardCategory}>CEO / CO-FOUNDER</h6>
+                <h4 className={classes.cardTitle}>
+                  {props.user_details.First_Name} {props.user_details.Last_Name}
+                </h4>
+                <p className={classes.description}>
+                  {props.user_details.About_Me}
+                </p>
+                <Button color="primary" round>
+                  Follow
+                </Button>
+              </CardBody>
+            </Card>
+          ) : (
+            ""
+          )}
+          ;
         </GridItem>
       </GridContainer>
     </div>
@@ -185,5 +298,6 @@ function UserProfile(props) {
 
 export default connect(
   mapStateToProps,
+  mapDispatchToProps,
   null
 )(UserProfile);
