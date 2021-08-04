@@ -15,6 +15,7 @@ import axios from "axios";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { saveUserDetails } from "../../redux/actions";
+import { clearUserDetails } from "../../redux/actions";
 
 const styles = {
   cardCategoryWhite: {
@@ -37,8 +38,13 @@ const styles = {
 
 const useStyles = makeStyles(styles);
 
+const mapStateToProps = (state) => {
+  return state.user_details || {};
+};
+
 const mapDispatchToProps = (dispatch, ownProps) => ({
   saveUserDetails: (userdetails) => dispatch(saveUserDetails(userdetails)),
+  clearUserDetails: () => dispatch(clearUserDetails()),
 });
 
 function UserLogin(props) {
@@ -80,68 +86,92 @@ function UserLogin(props) {
       });
   };
 
+  const LogOut = (e) => {
+    e.preventDefault();
+    props.clearUserDetails();
+  };
+
+  const isLogin = props.user_details
+    ? Object.entries(props.user_details).length === 0
+      ? false
+      : true
+    : false;
   const classes = useStyles();
   return (
     <div>
       <GridContainer>
-        <GridItem xs={12} sm={12} md={8}>
-          <Card>
-            <CardHeader color="primary">
-              <h4 className={classes.cardTitleWhite}>Login</h4>
-              <p className={classes.cardCategoryWhite}>
-                Insert your username and password
-              </p>
-            </CardHeader>
-            <CardBody>
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={3}>
-                  <CustomInput
-                    labelText="Username"
-                    id="user_name"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      onChange: (e) => {
-                        handleChange(e);
-                      },
-                    }}
-                  />
-                </GridItem>
-                <GridItem xs={12} sm={12} md={4}>
-                  <CustomInput
-                    labelText="Password"
-                    id="password"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      onChange: (e) => {
-                        handleChange(e);
-                      },
-                    }}
-                  />
-                </GridItem>
-              </GridContainer>
-            </CardBody>
-            <CardFooter>
-              <Button
-                onClick={(e) => {
-                  Login(e);
-                }}
-                color="primary"
-              >
-                Login
-              </Button>
-            </CardFooter>
-          </Card>
-        </GridItem>
+        {!isLogin ? (
+          <GridItem xs={12} sm={12} md={8}>
+            <Card>
+              <CardHeader color="primary">
+                <h4 className={classes.cardTitleWhite}>Login</h4>
+                <p className={classes.cardCategoryWhite}>
+                  Insert your username and password
+                </p>
+              </CardHeader>
+              <CardBody>
+                <GridContainer>
+                  <GridItem xs={12} sm={12} md={3}>
+                    <CustomInput
+                      labelText="Username"
+                      id="user_name"
+                      formControlProps={{
+                        fullWidth: true,
+                      }}
+                      inputProps={{
+                        onChange: (e) => {
+                          handleChange(e);
+                        },
+                      }}
+                    />
+                  </GridItem>
+                  <GridItem xs={12} sm={12} md={4}>
+                    <CustomInput
+                      labelText="Password"
+                      id="password"
+                      formControlProps={{
+                        fullWidth: true,
+                      }}
+                      inputProps={{
+                        onChange: (e) => {
+                          handleChange(e);
+                        },
+                      }}
+                    />
+                  </GridItem>
+                </GridContainer>
+              </CardBody>
+              <CardFooter>
+                <Button
+                  onClick={(e) => {
+                    Login(e);
+                  }}
+                  color="primary"
+                >
+                  Login
+                </Button>
+              </CardFooter>
+            </Card>
+          </GridItem>
+        ) : (
+          <GridItem xs={12} sm={12} md={8}>
+            <Button
+              onClick={(e) => {
+                LogOut(e);
+              }}
+              color="primary"
+            >
+              LogOut
+            </Button>
+          </GridItem>
+        )}
       </GridContainer>
     </div>
   );
 }
 
 export default connect(
-  null,
-  mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps,
+  null
 )(UserLogin);

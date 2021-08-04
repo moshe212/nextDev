@@ -49,16 +49,22 @@ const styles = {
 const useStyles = makeStyles(styles);
 
 function UserProfile(props) {
+  const isLogin = props.user_details
+    ? Object.entries(props.user_details).length === 0
+      ? false
+      : true
+    : false;
+
   const [formstate, setFormstate] = useState({
-    user_name: props.user_details ? props.user_details.UserName : "",
-    email_address: props.user_details ? props.user_details.Email_address : "",
-    first_name: props.user_details ? props.user_details.First_Name : "",
-    last_name: props.user_details ? props.user_details.Last_Name : "",
-    city: props.user_details ? props.user_details.City : "",
-    country: props.user_details ? props.user_details.Country : "",
-    postal_code: props.user_details ? props.user_details.Postal_Code : "",
-    about_me: props.user_details ? props.user_details.About_Me : "",
-    token: props.user_details ? props.user_details.Token : "",
+    user_name: isLogin ? props.user_details.UserName : "",
+    email_address: isLogin ? props.user_details.Email_address : "",
+    first_name: isLogin ? props.user_details.First_Name : "",
+    last_name: isLogin ? props.user_details.Last_Name : "",
+    city: isLogin ? props.user_details.City : "",
+    country: isLogin ? props.user_details.Country : "",
+    postal_code: isLogin ? props.user_details.Postal_Code : "",
+    about_me: isLogin ? props.user_details.About_Me : "",
+    token: isLogin ? props.user_details.Token : "",
   });
 
   const handleChange = (e) => {
@@ -266,7 +272,7 @@ function UserProfile(props) {
           </Card>
         </GridItem>
         <GridItem xs={12} sm={12} md={4}>
-          {props.user_details ? (
+          {isLogin ? (
             <Card profile>
               <CardAvatar profile>
                 <a href="#pablo" onClick={(e) => e.preventDefault()}>
