@@ -9,6 +9,7 @@ const checkauth = require("./middleware/CheckAuth");
 const { models } = require("./models");
 const { mongoFunc } = require("./mongoFunc");
 const cors = require("cors");
+const path = require("path");
 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
