@@ -74,6 +74,10 @@ app.post("/api/RegisterUser", async (req, res) => {
                 } else {
                   res.send(user);
                 }
+              })
+              .catch((err) => {
+                console.log(err);
+                res.status(500).json({ error: err });
               });
           }
         });
