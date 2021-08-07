@@ -70,7 +70,7 @@ app.post("/api/RegisterUser", async (req, res) => {
               .AddUser(newUserDetails)
               .then((error, user) => {
                 if (error) {
-                  res.send(error);
+                  res.status(500).json({ error: err });
                 } else {
                   res.send(user);
                 }
