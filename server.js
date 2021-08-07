@@ -191,7 +191,7 @@ app.post("/api/UpdateProfile", checkauth, async (req, res) => {
 
 app.get("*", (req, res) => {
   console.log("*", req.body);
-  res.send("root");
+  res.sendFile(path.join(__dirname + "/frontend/build/index.html"));
 });
 
 connectToDB().then(() => {
