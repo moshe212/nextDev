@@ -17,6 +17,8 @@ import { useHistory } from "react-router-dom";
 import { saveUserDetails } from "../../redux/actions";
 import { clearUserDetails } from "../../redux/actions";
 
+import { message } from "antd";
+
 const styles = {
   cardCategoryWhite: {
     color: "rgba(255,255,255,.62)",
@@ -73,13 +75,34 @@ function UserLogin(props) {
       })
       .then(function(response) {
         // handle success
+        message.success({
+          content:
+            "You success log in. We immediately transfer you to profile page",
+          className: "custom-class",
+          style: {
+            marginTop: "10vh",
+          },
+          duration: 3,
+        });
         console.log(response.data);
-        props.saveUserDetails(response.data.userdetails);
-        history.push("/admin/user");
+
+        setTimeout(() => {
+          props.saveUserDetails(response.data.userdetails);
+          history.push("/admin/user");
+        }, 2000);
       })
       .catch(function(error) {
         // handle error
         console.log(error);
+        message.error({
+          content:
+            "You not success log in. We sorry but you can try again.. Never Give Up",
+          className: "custom-class",
+          style: {
+            marginTop: "10vh",
+          },
+          duration: 3,
+        });
       })
       .then(function() {
         // always executed

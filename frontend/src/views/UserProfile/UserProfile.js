@@ -18,6 +18,7 @@ import avatar from "assets/img/faces/marc.jpg";
 import { connect } from "react-redux";
 import axios from "axios";
 import { saveUserDetails } from "../../redux/actions";
+import { message } from "antd";
 
 const mapStateToProps = (state) => {
   return state.user_details || {};
@@ -81,7 +82,14 @@ function UserProfile(props) {
 
   const UpdateProfile = (e) => {
     e.preventDefault();
-
+    // message.loading("Action in progress..", 0);
+    message.loading({
+      content: "We update your data on DB..",
+      className: "custom-class",
+      style: {
+        marginTop: "10vh",
+      },
+    });
     console.log(formstate);
     axios
       .post("/api/UpdateProfile", {
@@ -89,8 +97,18 @@ function UserProfile(props) {
       })
       .then(function(response) {
         // handle success
-        console.log("pro", response.data);
-        props.saveUserDetails(response.data.userdetails);
+        setTimeout(() => {
+          message.destroy();
+          message.success({
+            content: "Your update successfuly save on DB",
+            className: "custom-class",
+            style: {
+              marginTop: "10vh",
+            },
+          });
+          console.log("pro", response.data);
+          props.saveUserDetails(response.data.userdetails);
+        }, 1000);
 
         // setResp(response.data.data[0].text);
       })

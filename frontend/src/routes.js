@@ -106,7 +106,7 @@ const dashboardRoutes = [
   },
   {
     path: "/login",
-    name: "User Login",
+    name: "User Login/LogOut",
     rtlName: "التطور للاحترافية",
     icon: Person,
     component: UserLogin,

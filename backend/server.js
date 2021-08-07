@@ -8,6 +8,7 @@ const mongoose = require("mongoose");
 const checkauth = require("./middleware/CheckAuth");
 const { models } = require("./models");
 const { mongoFunc } = require("./mongoFunc");
+const cors = require("cors");
 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -16,6 +17,10 @@ const { result } = require("lodash");
 
 dotenv.config();
 app.use(bodyParser.json());
+app.use(cors());
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, "frontend/build")));
 
 let port = process.env.PORT;
 if (port == null || port == "") {
@@ -88,6 +93,7 @@ app.post("/api/LogInUser", async (req, res) => {
         user[0].Password,
         (err, result) => {
           if (err) {
+            console.log(err);
             return res.status(401).json({ message: "Auth faild" });
           }
           if (result) {
@@ -113,6 +119,8 @@ app.post("/api/LogInUser", async (req, res) => {
               // token: token,
               userdetails: user_details,
             });
+          } else {
+            return res.status(400).json({ message: "Invalid details" });
           }
         }
       );
