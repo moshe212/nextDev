@@ -25,7 +25,7 @@ app.use(express.static(path.join(__dirname, "./frontend/build")));
 
 let port = process.env.PORT;
 if (port == null || port == "") {
-  port = 5000;
+  port = 8000;
 }
 
 let Mongo_Path = process.env.Mongo_Path;
