@@ -21,7 +21,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, "./frontend/build")));
+app.use(express.static(path.join(__dirname, "frontend/build")));
 
 let port = process.env.PORT;
 if (port == null || port == "") {
@@ -64,20 +64,18 @@ app.post("/api/RegisterUser", async (req, res) => {
               Country: req.body.userDetails.country,
               Postal_Code: req.body.userDetails.postal_code,
               About_Me: "",
+              Token: "",
             };
             console.log(newUserDetails);
             const newUser = await mongoFunc
               .AddUser(newUserDetails)
-              .then((error, user) => {
+              .then((user, error) => {
                 if (error) {
-                  res.status(500).json({ error: err });
+                  console.log("error", error);
+                  res.status(500).json({ error: error });
                 } else {
                   res.send(user);
                 }
-              })
-              .catch((err) => {
-                console.log(err);
-                res.status(500).json({ error: err });
               });
           }
         });
@@ -123,6 +121,8 @@ app.post("/api/LogInUser", async (req, res) => {
               About_Me: user[0].About_Me,
               Token: token,
             };
+            user[0].Token = token;
+            user[0].save();
             return res.status(200).json({
               message: "Auth successful",
               // token: token,
@@ -142,6 +142,22 @@ app.post("/api/LogInUser", async (req, res) => {
 
 app.post("/api/LogOutUser", checkauth, async (req, res) => {
   console.log(req.body);
+  const query = { Token: req.body.userDetails.token };
+  const update = {
+    Token: "",
+  };
+  models.User.findOneAndUpdate(
+    query,
+    update,
+    { new: true },
+    function (err, doc) {
+      if (err) {
+        console.log("Can not update", err);
+        return res.status(500).json({ error: err });
+      }
+      return res.status(200).json({ message: "You logged out" });
+    }
+  );
 });
 
 app.post("/api/UpdateProfile", checkauth, async (req, res) => {
@@ -161,7 +177,7 @@ app.post("/api/UpdateProfile", checkauth, async (req, res) => {
     query,
     update,
     { new: true },
-    function (err, doc) {
+    function async(err, doc) {
       if (err) {
         console.log("Can not update", err);
         return res.status(500).json({ error: err });
@@ -172,6 +188,8 @@ app.post("/api/UpdateProfile", checkauth, async (req, res) => {
         process.env.JWT_KEY,
         { expiresIn: "1h" }
       );
+      doc.Token = token;
+      doc.save();
       const user_details = {
         UserName: doc.UserName,
         Company: doc.Company,

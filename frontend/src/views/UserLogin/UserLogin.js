@@ -111,7 +111,34 @@ function UserLogin(props) {
 
   const LogOut = (e) => {
     e.preventDefault();
-    props.clearUserDetails();
+
+    axios
+      .post("/api/LogOutUser", {
+        userDetails: { token: props.user_details.Token },
+      })
+      .then(function(response) {
+        // handle success
+        console.log(response.data);
+        message.success({
+          content: "You Successfully Logged Out. We miss you",
+          className: "custom-class",
+          style: {
+            marginTop: "10vh",
+          },
+          duration: 3,
+        });
+
+        setTimeout(() => {
+          props.clearUserDetails();
+        }, 2000);
+      })
+      .catch(function(error) {
+        // handle error
+        console.log(error);
+      })
+      .then(function() {
+        // always executed
+      });
   };
 
   const isLogin = props.user_details

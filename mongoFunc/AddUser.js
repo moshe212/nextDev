@@ -11,6 +11,7 @@ const AddUser = async function ({
   Country,
   Postal_Code,
   About_Me,
+  Token,
 }) {
   const user = new models.User({
     UserName,
@@ -23,6 +24,7 @@ const AddUser = async function ({
     Country,
     Postal_Code,
     About_Me,
+    Token,
   });
 
   let newUser;

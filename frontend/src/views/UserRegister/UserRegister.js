@@ -12,6 +12,8 @@ import CardHeader from "components/Card/CardHeader.js";
 import CardBody from "components/Card/CardBody.js";
 import CardFooter from "components/Card/CardFooter.js";
 import axios from "axios";
+import { message } from "antd";
+import { useHistory } from "react-router-dom";
 
 const styles = {
   cardCategoryWhite: {
@@ -46,6 +48,8 @@ export default function UserRegister() {
     password: "",
   });
 
+  let history = useHistory();
+
   const handleChange = (e) => {
     // console.log(e.target);
     let nam = e.target.id;
@@ -65,11 +69,32 @@ export default function UserRegister() {
       .then(function(response) {
         // handle success
         console.log(response.data);
+        message.success({
+          content:
+            "You success register. We immediately transfer you to LogIn page",
+          className: "custom-class",
+          style: {
+            marginTop: "10vh",
+          },
+          duration: 3,
+        });
+        setTimeout(() => {
+          history.push("/admin/login");
+        }, 2000);
         // setResp(response.data.data[0].text);
       })
       .catch(function(error) {
         // handle error
         console.log(error);
+        message.error({
+          content:
+            "You not success register. We sorry but you can try again.. Never Give Up",
+          className: "custom-class",
+          style: {
+            marginTop: "10vh",
+          },
+          duration: 3,
+        });
       })
       .then(function() {
         // always executed
