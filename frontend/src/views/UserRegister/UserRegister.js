@@ -46,6 +46,8 @@ export default function UserRegister() {
     country: "",
     postal_code: "",
     password: "",
+    error_user: false,
+    error_pass: false,
   });
 
   let history = useHistory();
@@ -60,45 +62,60 @@ export default function UserRegister() {
 
   const Register = (e) => {
     e.preventDefault();
-
     console.log(formstate);
-    axios
-      .post("/api/RegisterUser", {
-        userDetails: formstate,
-      })
-      .then(function(response) {
-        // handle success
-        console.log(response.data);
-        message.success({
-          content:
-            "You success register. We immediately transfer you to LogIn page",
-          className: "custom-class",
-          style: {
-            marginTop: "10vh",
-          },
-          duration: 3,
+    if (formstate.user_name.length > 0 && formstate.password.length > 0) {
+      axios
+        .post("/api/RegisterUser", {
+          userDetails: formstate,
+        })
+        .then(function(response) {
+          // handle success
+          console.log(response.data);
+          message.success({
+            content:
+              "You success register. We immediately transfer you to LogIn page",
+            className: "custom-class",
+            style: {
+              marginTop: "10vh",
+            },
+            duration: 3,
+          });
+          setTimeout(() => {
+            history.push("/admin/login");
+          }, 2000);
+          // setResp(response.data.data[0].text);
+        })
+        .catch(function(error) {
+          // handle error
+          console.log(error);
+          message.error({
+            content:
+              "You not success register. We sorry but you can try again.. Never Give Up",
+            className: "custom-class",
+            style: {
+              marginTop: "10vh",
+            },
+            duration: 3,
+          });
+        })
+        .then(function() {
+          // always executed
         });
-        setTimeout(() => {
-          history.push("/admin/login");
-        }, 2000);
-        // setResp(response.data.data[0].text);
-      })
-      .catch(function(error) {
-        // handle error
-        console.log(error);
-        message.error({
-          content:
-            "You not success register. We sorry but you can try again.. Never Give Up",
-          className: "custom-class",
-          style: {
-            marginTop: "10vh",
-          },
-          duration: 3,
-        });
-      })
-      .then(function() {
-        // always executed
-      });
+    } else {
+      if (formstate.user_name.length === 0 && formstate.password.length === 0) {
+        setFormstate({ ...formstate, error_user: true, error_pass: true });
+      } else if (
+        formstate.password.length === 0 &&
+        formstate.user_name.length > 0
+      ) {
+        setFormstate({ ...formstate, error_pass: true, error_user: false });
+      } else if (
+        formstate.password.length > 0 &&
+        formstate.user_name.length === 0
+      ) {
+        setFormstate({ ...formstate, error_user: true, error_pass: false });
+      }
+    }
   };
 
   const classes = useStyles();
@@ -130,12 +147,7 @@ export default function UserRegister() {
                 </GridItem>
                 <GridItem xs={12} sm={12} md={3}>
                   <CustomInput
-                    required
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
+                    error={formstate.error_user}
                     labelText="Username"
                     id="user_name"
                     formControlProps={{
@@ -166,12 +178,6 @@ export default function UserRegister() {
               <GridContainer>
                 <GridItem xs={12} sm={12} md={6}>
                   <CustomInput
-                    required
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
                     labelText="First Name"
                     id="first_name"
                     formControlProps={{
@@ -186,12 +192,6 @@ export default function UserRegister() {
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
                   <CustomInput
-                    required
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
                     labelText="Last Name"
                     id="last_name"
                     formControlProps={{
@@ -250,12 +250,7 @@ export default function UserRegister() {
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
                   <CustomInput
-                    required
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
+                    error={formstate.error_pass}
                     labelText="Password"
                     id="password"
                     formControlProps={{

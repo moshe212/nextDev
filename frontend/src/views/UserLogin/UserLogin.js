@@ -53,8 +53,10 @@ function UserLogin(props) {
   const [formstate, setFormstate] = useState({
     user_name: "",
     password: "",
+    error_user: false,
+    error_pass: false,
   });
-
+  console.log(formstate);
   let history = useHistory();
 
   const handleChange = (e) => {
@@ -68,47 +70,63 @@ function UserLogin(props) {
   const Login = (e) => {
     e.preventDefault();
 
-    console.log(formstate);
-    axios
-      .post("/api/LogInUser", {
-        userDetails: formstate,
-      })
-      .then(function(response) {
-        // handle success
-        message.success({
-          content:
-            "You success log in. We immediately transfer you to profile page",
-          className: "custom-class",
-          style: {
-            marginTop: "10vh",
-          },
-          duration: 3,
-        });
-        console.log(response.data);
+    // console.log(formstate);
+    if (formstate.user_name.length > 0 && formstate.password.length > 0) {
+      setFormstate({ ...formstate, error_user: false, error_pass: false });
+      axios
+        .post("/api/LogInUser", {
+          userDetails: formstate,
+        })
+        .then(function(response) {
+          // handle success
+          message.success({
+            content:
+              "You success log in. We immediately transfer you to profile page",
+            className: "custom-class",
+            style: {
+              marginTop: "10vh",
+            },
+            duration: 3,
+          });
+          console.log(response.data);
 
-        setTimeout(() => {
-          props.saveUserDetails(response.data.userdetails);
-          history.push("/admin/user");
-        }, 2000);
-      })
-      .catch(function(error) {
-        // handle error
-        console.log(error);
-        message.error({
-          content:
-            "You not success log in. We sorry but you can try again.. Never Give Up",
-          className: "custom-class",
-          style: {
-            marginTop: "10vh",
-          },
-          duration: 3,
+          setTimeout(() => {
+            props.saveUserDetails(response.data.userdetails);
+            history.push("/admin/user");
+          }, 2000);
+        })
+        .catch(function(error) {
+          // handle error
+          console.log(error);
+          message.error({
+            content:
+              "You not success log in. We sorry but you can try again.. Never Give Up",
+            className: "custom-class",
+            style: {
+              marginTop: "10vh",
+            },
+            duration: 3,
+          });
+        })
+        .then(function() {
+          // always executed
         });
-      })
-      .then(function() {
-        // always executed
-      });
+    } else {
+      if (formstate.user_name.length === 0 && formstate.password.length === 0) {
+        setFormstate({ ...formstate, error_user: true, error_pass: true });
+      } else if (
+        formstate.password.length === 0 &&
+        formstate.user_name.length > 0
+      ) {
+        setFormstate({ ...formstate, error_pass: true, error_user: false });
+      } else if (
+        formstate.password.length > 0 &&
+        formstate.user_name.length === 0
+      ) {
+        setFormstate({ ...formstate, error_user: true, error_pass: false });
+      }
+    }
   };
-
   const LogOut = (e) => {
     e.preventDefault();
 
@@ -163,12 +181,7 @@ function UserLogin(props) {
                 <GridContainer>
                   <GridItem xs={12} sm={12} md={3}>
                     <CustomInput
-                      required
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
+                      error={formstate.error_user}
                       labelText="Username"
                       id="user_name"
                       formControlProps={{
@@ -183,12 +196,7 @@ function UserLogin(props) {
                   </GridItem>
                   <GridItem xs={12} sm={12} md={4}>
                     <CustomInput
-                      required
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
+                      error={formstate.error_pass}
                       labelText="Password"
                       id="password"
                       formControlProps={{
