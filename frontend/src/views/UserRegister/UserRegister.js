@@ -9,24 +9,11 @@ import CustomInput from "components/CustomInput/CustomInput.js";
 import Button from "components/CustomButtons/Button.js";
 import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
-import CardAvatar from "components/Card/CardAvatar.js";
 import CardBody from "components/Card/CardBody.js";
 import CardFooter from "components/Card/CardFooter.js";
-
-import avatar from "assets/img/faces/marc.jpg";
-
-import { connect } from "react-redux";
 import axios from "axios";
-import { saveUserDetails } from "../../redux/actions";
 import { message } from "antd";
-
-const mapStateToProps = (state) => {
-  return state.user_details || {};
-};
-
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  saveUserDetails: (userdetails) => dispatch(saveUserDetails(userdetails)),
-});
+import { useHistory } from "react-router-dom";
 
 const styles = {
   cardCategoryWhite: {
@@ -49,24 +36,21 @@ const styles = {
 
 const useStyles = makeStyles(styles);
 
-function UserProfile(props) {
-  const isLogin = props.user_details
-    ? Object.entries(props.user_details).length === 0
-      ? false
-      : true
-    : false;
-
+export default function UserRegister() {
   const [formstate, setFormstate] = useState({
-    user_name: isLogin ? props.user_details.UserName : "",
-    email_address: isLogin ? props.user_details.Email_address : "",
-    first_name: isLogin ? props.user_details.First_Name : "",
-    last_name: isLogin ? props.user_details.Last_Name : "",
-    city: isLogin ? props.user_details.City : "",
-    country: isLogin ? props.user_details.Country : "",
-    postal_code: isLogin ? props.user_details.Postal_Code : "",
-    about_me: isLogin ? props.user_details.About_Me : "",
-    token: isLogin ? props.user_details.Token : "",
+    user_name: "",
+    email_address: "",
+    first_name: "",
+    last_name: "",
+    city: "",
+    country: "",
+    postal_code: "",
+    password: "",
+    error_user: false,
+    error_pass: false,
   });
+
+  let history = useHistory();
 
   const handleChange = (e) => {
     // console.log(e.target);
@@ -76,59 +60,73 @@ function UserProfile(props) {
     // console.log(formstate);
   };
 
-  console.log("props", props);
-  console.log("state", formstate);
-  const classes = useStyles();
-
-  const UpdateProfile = (e) => {
+  const Register = (e) => {
     e.preventDefault();
-    // message.loading("Action in progress..", 0);
-    message.loading({
-      content: "We update your data on DB..",
-      className: "custom-class",
-      style: {
-        marginTop: "10vh",
-      },
-    });
     console.log(formstate);
-    axios
-      .post("/api/UpdateProfile", {
-        userDetails: formstate,
-      })
-      .then(function(response) {
-        // handle success
-        setTimeout(() => {
-          message.destroy();
+    if (formstate.user_name.length > 0 && formstate.password.length > 0) {
+      axios
+        .post("/api/RegisterUser", {
+          userDetails: formstate,
+        })
+        .then(function(response) {
+          // handle success
+          console.log(response.data);
           message.success({
-            content: "Your update successfuly save on DB",
+            content:
+              "You success register. We immediately transfer you to LogIn page",
             className: "custom-class",
             style: {
               marginTop: "10vh",
             },
+            duration: 3,
           });
-          console.log("pro", response.data);
-          props.saveUserDetails(response.data.userdetails);
-        }, 1000);
-
-        // setResp(response.data.data[0].text);
-      })
-      .catch(function(error) {
-        // handle error
-        console.log(error);
-      })
-      .then(function() {
-        // always executed
-      });
+          setTimeout(() => {
+            history.push("/admin/login");
+          }, 2000);
+          // setResp(response.data.data[0].text);
+        })
+        .catch(function(error) {
+          // handle error
+          console.log(error);
+          message.error({
+            content:
+              "You not success register. We sorry but you can try again.. Never Give Up",
+            className: "custom-class",
+            style: {
+              marginTop: "10vh",
+            },
+            duration: 3,
+          });
+        })
+        .then(function() {
+          // always executed
+        });
+    } else {
+      if (formstate.user_name.length === 0 && formstate.password.length === 0) {
+        setFormstate({ ...formstate, error_user: true, error_pass: true });
+      } else if (
+        formstate.password.length === 0 &&
+        formstate.user_name.length > 0
+      ) {
+        setFormstate({ ...formstate, error_pass: true, error_user: false });
+      } else if (
+        formstate.password.length > 0 &&
+        formstate.user_name.length === 0
+      ) {
+        setFormstate({ ...formstate, error_user: true, error_pass: false });
+      }
+    }
   };
 
+  const classes = useStyles();
   return (
     <div>
       <GridContainer>
         <GridItem xs={12} sm={12} md={8}>
           <Card>
             <CardHeader color="primary">
-              <h4 className={classes.cardTitleWhite}>Edit Profile</h4>
-              <p className={classes.cardCategoryWhite}>Complete your profile</p>
+              <h4 className={classes.cardTitleWhite}>Register</h4>
+              <p className={classes.cardCategoryWhite}>Complete your details</p>
             </CardHeader>
             <CardBody>
               <GridContainer>
@@ -141,11 +139,15 @@ function UserProfile(props) {
                     }}
                     inputProps={{
                       disabled: true,
+                      onClick: (e) => {
+                        handleChange(e);
+                      },
                     }}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={3}>
                   <CustomInput
+                    error={formstate.error_user}
                     labelText="Username"
                     id="user_name"
                     formControlProps={{
@@ -156,7 +158,6 @@ function UserProfile(props) {
                         handleChange(e);
                       },
                     }}
-                    defaultValue={formstate.user_name}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
@@ -171,7 +172,6 @@ function UserProfile(props) {
                         handleChange(e);
                       },
                     }}
-                    defaultValue={formstate.email_address}
                   />
                 </GridItem>
               </GridContainer>
@@ -188,7 +188,6 @@ function UserProfile(props) {
                         handleChange(e);
                       },
                     }}
-                    defaultValue={formstate.first_name}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -203,7 +202,6 @@ function UserProfile(props) {
                         handleChange(e);
                       },
                     }}
-                    defaultValue={formstate.last_name}
                   />
                 </GridItem>
               </GridContainer>
@@ -220,7 +218,6 @@ function UserProfile(props) {
                         handleChange(e);
                       },
                     }}
-                    defaultValue={formstate.city}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
@@ -235,7 +232,6 @@ function UserProfile(props) {
                         handleChange(e);
                       },
                     }}
-                    defaultValue={formstate.country}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
@@ -250,29 +246,21 @@ function UserProfile(props) {
                         handleChange(e);
                       },
                     }}
-                    defaultValue={formstate.postal_code}
                   />
                 </GridItem>
-              </GridContainer>
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={12}>
-                  <InputLabel style={{ color: "#AAAAAA" }}>About me</InputLabel>
+                <GridItem xs={12} sm={12} md={4}>
                   <CustomInput
-                    labelText="Lamborghini Mercy, Your chick she so thirsty, I'm in that two seat Lambo."
-                    id="about_me"
+                    error={formstate.error_pass}
+                    labelText="Password"
+                    id="password"
                     formControlProps={{
                       fullWidth: true,
-                    }}
-                    inputProps={{
-                      multiline: true,
-                      rows: 5,
                     }}
                     inputProps={{
                       onChange: (e) => {
                         handleChange(e);
                       },
                     }}
-                    defaultValue={formstate.about_me}
                   />
                 </GridItem>
               </GridContainer>
@@ -280,48 +268,16 @@ function UserProfile(props) {
             <CardFooter>
               <Button
                 onClick={(e) => {
-                  UpdateProfile(e);
+                  Register(e);
                 }}
                 color="primary"
               >
-                Update Profile
+                Register
               </Button>
             </CardFooter>
           </Card>
-        </GridItem>
-        <GridItem xs={12} sm={12} md={4}>
-          {isLogin ? (
-            <Card profile>
-              <CardAvatar profile>
-                <a href="#pablo" onClick={(e) => e.preventDefault()}>
-                  <img src={avatar} alt="..." />
-                </a>
-              </CardAvatar>
-              <CardBody profile>
-                <h6 className={classes.cardCategory}>CEO / CO-FOUNDER</h6>
-                <h4 className={classes.cardTitle}>
-                  {props.user_details.First_Name} {props.user_details.Last_Name}
-                </h4>
-                <p className={classes.description}>
-                  {props.user_details.About_Me}
-                </p>
-                <Button color="primary" round>
-                  Follow
-                </Button>
-              </CardBody>
-            </Card>
-          ) : (
-            ""
-          )}
-          ;
         </GridItem>
       </GridContainer>
     </div>
   );
 }
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-  null
-)(UserProfile);

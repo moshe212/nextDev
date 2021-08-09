@@ -34,6 +34,8 @@ import Maps from "views/Maps/Maps.js";
 import NotificationsPage from "views/Notifications/Notifications.js";
 import UpgradeToPro from "views/UpgradeToPro/UpgradeToPro.js";
 import UserLogin from "views/UserLogin/UserLogin.js";
+import UserRegister from "views/UserRegister/UserRegister.js";
+
 // core components/views for RTL layout
 import RTLPage from "views/RTLPage/RTLPage.js";
 
@@ -104,10 +106,18 @@ const dashboardRoutes = [
   },
   {
     path: "/login",
-    name: "User Login",
+    name: "User Login/LogOut",
     rtlName: "التطور للاحترافية",
     icon: Person,
     component: UserLogin,
+    layout: "/admin",
+  },
+  {
+    path: "/register",
+    name: "User Register",
+    rtlName: "التطور للاحترافية",
+    icon: Person,
+    component: UserRegister,
     layout: "/admin",
   },
   {
