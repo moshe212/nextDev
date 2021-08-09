@@ -131,6 +131,11 @@ export default function UserRegister() {
                 <GridItem xs={12} sm={12} md={3}>
                   <CustomInput
                     required
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
                     labelText="Username"
                     id="user_name"
                     formControlProps={{
@@ -162,6 +167,11 @@ export default function UserRegister() {
                 <GridItem xs={12} sm={12} md={6}>
                   <CustomInput
                     required
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
                     labelText="First Name"
                     id="first_name"
                     formControlProps={{
@@ -177,6 +187,11 @@ export default function UserRegister() {
                 <GridItem xs={12} sm={12} md={6}>
                   <CustomInput
                     required
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
                     labelText="Last Name"
                     id="last_name"
                     formControlProps={{
@@ -236,6 +251,11 @@ export default function UserRegister() {
                 <GridItem xs={12} sm={12} md={4}>
                   <CustomInput
                     required
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
                     labelText="Password"
                     id="password"
                     formControlProps={{
