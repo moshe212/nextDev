@@ -163,6 +163,7 @@ function UserLogin(props) {
                 <GridContainer>
                   <GridItem xs={12} sm={12} md={3}>
                     <CustomInput
+                      required
                       labelText="Username"
                       id="user_name"
                       formControlProps={{
@@ -177,6 +178,7 @@ function UserLogin(props) {
                   </GridItem>
                   <GridItem xs={12} sm={12} md={4}>
                     <CustomInput
+                      required
                       labelText="Password"
                       id="password"
                       formControlProps={{
